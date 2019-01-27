@@ -34,21 +34,21 @@ void ForWSpeed(int s)
 void turnWithAngle(int theta)
 {
   int c = 9; //or 11 with the AAA batrays
-  int t = 36.6 * theta / 180 * 3.1415 * c;
+  int t = 36.6 * 2 * theta / 180 * 3.1415 * c;
   int s = 200;
   if (t >= 0)
   {
-    r.writeMicroseconds(1500 - s);
-    l.writeMicroseconds(1500 - s);
+    r.writeMicroseconds(1300);
+    l.writeMicroseconds(1450);
     delay(t);
   }
   else
   {
-    r.writeMicroseconds(1500 + s);
-    l.writeMicroseconds(1500 + s);
+    r.writeMicroseconds(1700);
+    l.writeMicroseconds(1550);
     delay(-1 * t);
   }
-  S();
+  stop();
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -70,30 +70,29 @@ void setup()
 
   pinMode(tri_b, OUTPUT); // triggered arduino signal output
   pinMode(echo_b, INPUT);
-
+}
   // code in infinite repetition of the project;
 
   void loop()
   {
-
     read();
-
+    
     if (right > 35){
       // turn right 
+      stop();
+      delay(1000);
       turnRight();
-
     }
-    if (front < 30) {
+    if (front < 5) {
       // check wall
+      stop();
+      delay(1000);
       checkWall();
-
     } else {
 
       // move forward
-      moveForward(10);
-
+      moveForward(1);
     }
-  
   }
 void stop()
 {
@@ -104,15 +103,15 @@ void moveForward(int d){
     // move by des
     int t = d * 36.6 * 1.5;
     int s = 200;
-    r.writeMicroseconds(1500 - s);
-    l.writeMicroseconds(1500 + s);
+    r.writeMicroseconds(1300);
+    l.writeMicroseconds(1600);
     delay(t);
 
 }
   void turnRight(){
     // move some small distance (enough to turn)
     if (front > 20){
-      moveForward(10);
+      moveForward(30);
     } else if (front < 10) {
       // check wall incase it started too soon
       checkWall();
@@ -120,7 +119,7 @@ void moveForward(int d){
     }
 
     // turn inplace
-    turnWithAngle(90);
+    turnWithAngle(-90);
     // move some small distance to enter between the walls
     moveForward(10);
 
@@ -129,25 +128,35 @@ void moveForward(int d){
   void turnLeft(){
 
     // just turn left
-    turnWithAngle(-90);
+    turnWithAngle(90);
     moveForward(10);
   }
 
   void checkWall(){
     // if green call turnRight
     // else if red call turnLeft
-    // if no right call turnLeft
     // else call turnRight
+    if(right > 30){
+      turnWithAngle(-90);
+      moveForward(10);
+    }
+    // if no right call turnLeft
+    else if(left > 30){
+      turnLeft();
+    }
     // else call turn180
+    else{
+      turn180();
+    }
   }
 
   void turn180(){
-    turnLeft();
-    turnLeft();
+    turnWithAngle(180);
   }
 
 
   //this method will make the robot turn if it finds a right turn and there is a str8 path
+  /*
   void turnRight2()
   {
     read();
@@ -188,7 +197,10 @@ void moveForward(int d){
     }
     S();
   }
+  */
+  
   //this method is for the 90 degree with a wall infront of the robot
+  /*
   void turnRigh1()
   {
     read();
@@ -266,10 +278,12 @@ void moveForward(int d){
     }
     S();
   }
+  */
 
   //u will know from the name
   // // // // // // // // // // //
   //there is an issue with this function it might get to close to the
+  /*
   void turn180()
   {
     while (front < 50)
@@ -288,6 +302,7 @@ void moveForward(int d){
     }
     S();
   }
+  */
   bool read()
   {
     duracao_frente = duracao_esq = duracao_dir = right = b_frente = back = left = front = 0;
