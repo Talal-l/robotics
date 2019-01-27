@@ -135,12 +135,12 @@ void moveForward(int d){
   void checkWall(){
     // if green call turnRight
     // else if red call turnLeft
-    // else call turnRight
+    // else if right open call turnRight
     if(right > 30){
       turnWithAngle(-90);
       moveForward(10);
     }
-    // if no right call turnLeft
+    // else if no right and left open call turnLeft
     else if(left > 30){
       turnLeft();
     }
