@@ -77,18 +77,25 @@ void setup()
   {
     read();
     
-    if (right > 35){
-      // turn right 
-      stop();
-      delay(1000);
-      turnRight();
-    }
-    if (front < 5) {
+    
+    if (front < 30) {
       // check wall
       stop();
       delay(1000);
+      while(front > 5){
+        moveForward(1);
+        read();
+      }
       checkWall();
-    } else {
+    } 
+    else if (right > 35){
+      // turn right 
+      stop();
+      delay(1000);
+      moveForward(25);
+      turnRight();
+    }
+    else {
 
       // move forward
       moveForward(1);
@@ -109,14 +116,6 @@ void moveForward(int d){
 
 }
   void turnRight(){
-    // move some small distance (enough to turn)
-    if (front > 20){
-      moveForward(30);
-    } else if (front < 10) {
-      // check wall incase it started too soon
-      checkWall();
-      return;
-    }
 
     // turn inplace
     turnWithAngle(-90);
@@ -137,8 +136,7 @@ void moveForward(int d){
     // else if red call turnLeft
     // else if right open call turnRight
     if(right > 30){
-      turnWithAngle(-90);
-      moveForward(10);
+      turnRight();
     }
     // else if no right and left open call turnLeft
     else if(left > 30){
@@ -152,6 +150,56 @@ void moveForward(int d){
 
   void turn180(){
     turnWithAngle(180);
+  }
+  
+  bool read()
+  {
+    duracao_frente = duracao_esq = duracao_dir = right = b_frente = back = left = front = 0;
+    // Front
+    digitalWrite(tri_f, LOW);               // their respective signal inputs and outputs are declared
+    delayMicroseconds(2);                   // Ultrasonic sensor and stored by sensor variable
+    digitalWrite(tri_f, HIGH);              // which converts the velocity of sound which is 340 m / s or
+    delayMicroseconds(5);                   // 29 microseconds per centimeter, as the signal goes back and forth
+    digitalWrite(tri_f, LOW);               // this time is half being sensor = time / 29/2;
+    duracao_frente = pulseIn(echo_f, HIGH); // so also on the other two sensors.
+    front = duracao_frente / 29 / 2;
+    // Left
+    digitalWrite(tri_l, LOW);
+    delayMicroseconds(2);
+    digitalWrite(tri_l, HIGH);
+    delayMicroseconds(5);
+    digitalWrite(tri_l, LOW);
+    duracao_esq = pulseIn(echo_l, HIGH);
+    left = duracao_esq / 29 / 2;
+
+    // Right
+    digitalWrite(tri_r, LOW);
+    delayMicroseconds(2);
+    digitalWrite(tri_r, HIGH);
+    delayMicroseconds(5);
+    digitalWrite(tri_r, LOW);
+    duracao_dir = pulseIn(echo_r, HIGH);
+    right = duracao_dir / 29 / 2;
+
+    // Front
+    digitalWrite(tri_b, LOW);         // their respective signal inputs and outputs are declared
+    delayMicroseconds(2);             // Ultrasonic sensor and stored by sensor variable
+    digitalWrite(tri_b, HIGH);        // which converts the velocity of sound which is 340 m / s or
+    delayMicroseconds(5);             // 29 microseconds per centimeter, as the signal goes back and forth
+    digitalWrite(tri_b, LOW);         // this time is half being sensor = time / 29/2;
+    b_frente = pulseIn(echo_b, HIGH); // so also on the other two sensors.
+    back = b_frente / 29 / 2;
+    //Print
+//    Serial.print("right : ");
+//    Serial.println(right);
+//    Serial.print("left:   ");
+//    Serial.println(left);
+//    Serial.print("front:   ");
+//    Serial.println(front);
+//    Serial.print("back:   ");
+//    Serial.println(back);
+    //delay(1000);
+    return true;
   }
 
 
@@ -303,52 +351,4 @@ void moveForward(int d){
     S();
   }
   */
-  bool read()
-  {
-    duracao_frente = duracao_esq = duracao_dir = right = b_frente = back = left = front = 0;
-    // Front
-    digitalWrite(tri_f, LOW);               // their respective signal inputs and outputs are declared
-    delayMicroseconds(2);                   // Ultrasonic sensor and stored by sensor variable
-    digitalWrite(tri_f, HIGH);              // which converts the velocity of sound which is 340 m / s or
-    delayMicroseconds(5);                   // 29 microseconds per centimeter, as the signal goes back and forth
-    digitalWrite(tri_f, LOW);               // this time is half being sensor = time / 29/2;
-    duracao_frente = pulseIn(echo_f, HIGH); // so also on the other two sensors.
-    front = duracao_frente / 29 / 2;
-    // Left
-    digitalWrite(tri_l, LOW);
-    delayMicroseconds(2);
-    digitalWrite(tri_l, HIGH);
-    delayMicroseconds(5);
-    digitalWrite(tri_l, LOW);
-    duracao_esq = pulseIn(echo_l, HIGH);
-    left = duracao_esq / 29 / 2;
-
-    // Right
-    digitalWrite(tri_r, LOW);
-    delayMicroseconds(2);
-    digitalWrite(tri_r, HIGH);
-    delayMicroseconds(5);
-    digitalWrite(tri_r, LOW);
-    duracao_dir = pulseIn(echo_r, HIGH);
-    right = duracao_dir / 29 / 2;
-
-    // Front
-    digitalWrite(tri_b, LOW);         // their respective signal inputs and outputs are declared
-    delayMicroseconds(2);             // Ultrasonic sensor and stored by sensor variable
-    digitalWrite(tri_b, HIGH);        // which converts the velocity of sound which is 340 m / s or
-    delayMicroseconds(5);             // 29 microseconds per centimeter, as the signal goes back and forth
-    digitalWrite(tri_b, LOW);         // this time is half being sensor = time / 29/2;
-    b_frente = pulseIn(echo_b, HIGH); // so also on the other two sensors.
-    back = b_frente / 29 / 2;
-    //Print
-    Serial.print("right : ");
-    Serial.println(right);
-    Serial.print("left:   ");
-    Serial.println(left);
-    Serial.print("front:   ");
-    Serial.println(front);
-    Serial.print("back:   ");
-    Serial.println(back);
-    //delay(1000);
-    return true;
-  }
+  
