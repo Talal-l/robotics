@@ -39,13 +39,13 @@ void turnWithAngle(int theta)
   if (t >= 0)
   {
     r.writeMicroseconds(1300);
-    l.writeMicroseconds(1450);
+    l.writeMicroseconds(1400);
     delay(t);
   }
   else
   {
     r.writeMicroseconds(1700);
-    l.writeMicroseconds(1550);
+    l.writeMicroseconds(1600);
     delay(-1 * t);
   }
   stop();
@@ -80,8 +80,8 @@ void setup()
     
     if (front < 30) {
       // check wall
-      stop();
-      delay(1000);
+//      stop();
+//      delay(1000);
       while(front > 5){
         moveForward(1);
         read();
@@ -90,17 +90,31 @@ void setup()
     } 
     else if (right > 35){
       // turn right 
-      stop();
-      delay(1000);
+//      stop();
+//      delay(1000);
       moveForward(25);
       turnRight();
     }
-    else {
 
+    
+    else {
+      //course correct
+      courseCorrect();
       // move forward
       moveForward(1);
     }
   }
+
+void courseCorrect(){
+
+    if(right < 5){
+      turnWithAngle(2);
+    }
+    else if(left < 5){
+      turnWithAngle(-2);
+    }
+    
+}
 void stop()
 {
   r.writeMicroseconds(1500);
@@ -111,7 +125,7 @@ void moveForward(int d){
     int t = d * 36.6 * 1.5;
     int s = 200;
     r.writeMicroseconds(1300);
-    l.writeMicroseconds(1600);
+    l.writeMicroseconds(1620);
     delay(t);
 
 }
