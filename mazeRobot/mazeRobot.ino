@@ -9,14 +9,24 @@ long duracao_frente, duracao_esq, duracao_dir, b_frente, right, left, front, bac
 int tri_f = 12;  // controls the pulse sent from the front sensor
 int echo_f = 13; // controls the pulse received from the front sensor
 
-int tri_l = 2;  // controls the sent forward sensor pulse
-int echo_l = 4; // controls the received pulse from the front sensor
+int tri_l = 2;  // controls the sent left sensor pulse
+int echo_l = 3; // controls the received pulse from the left sensor
 
 int tri_r = A5;  // controls the forward sensor sent pulse
 int echo_r = A4; // controls the received pulse from the front sensor
 
 int tri_b = A1;
 int echo_b = A0;
+
+// pins to control the color sensor 
+int s0 = 4;
+int s1 = 5;
+int s2 = 6;
+int s3 = 7;
+// pin used to read the output of the sensor
+int sensorIn = A3 ;
+
+
 
 //////////////////////////////////
 //Forward With Speed
@@ -70,39 +80,56 @@ void setup()
 
   pinMode(tri_b, OUTPUT); // triggered arduino signal output
   pinMode(echo_b, INPUT);
+
+  // set the color sensor pins
+  pinMode(s0, OUTPUT);
+  pinMode(s1, OUTPUT);
+  pinMode(s2, OUTPUT);
+  pinMode(s3, OUTPUT);
+  pinMode(sensorIn, INPUT);
+  
+  // set frequency-scalling to 20% to insure that the pulse is detected 
+  digitalWrite(s0,HIGH);
+  digitalWrite(s1,LOW);
+
+
 }
   // code in infinite repetition of the project;
 
   void loop()
   {
-    read();
-    
-    
-    if (front < 30) {
-      // check wall
-//      stop();
-//      delay(1000);
-      while(front > 5){
-        moveForward(1);
-        read();
-      }
-      checkWall();
-    } 
-    else if (right > 35){
-      // turn right 
-//      stop();
-//      delay(1000);
-      moveForward(25);
-      turnRight();
-    }
+
+    color();
 
     
-    else {
-      //course correct
-      courseCorrect();
-      // move forward
-      moveForward(1);
-    }
+//    read();
+//    
+//    
+//    if (front < 30) {
+//      // check wall
+////      stop();
+////      delay(1000);
+//      while(front > 5){
+//        moveForward(1);
+//        read();
+//      }
+//      checkWall();
+//    } 
+//    else if (right > 35){
+//      // turn right 
+////      stop();
+////      delay(1000);
+//      moveForward(25);
+//      turnRight();
+//    }
+//
+//    
+//    else {
+//      //course correct
+//      courseCorrect();
+//      // move forward
+//      moveForward(1);
+//    }
   }
 
 void courseCorrect(){
@@ -145,10 +172,51 @@ void moveForward(int d){
     moveForward(10);
   }
 
+
+void color()  
+{    
+// only read color if sensorIn is high
+  digitalWrite(s2, LOW);  
+  digitalWrite(s3, LOW);   
+int  red = pulseIn(sensorIn, digitalRead(sensorIn) == HIGH ? LOW : HIGH);  
+  digitalWrite(s3, HIGH);  
+  //count OUT, pBLUE, BLUE  
+  int blue = pulseIn(sensorIn, digitalRead(sensorIn) == HIGH ? LOW : HIGH);  
+  digitalWrite(s2, HIGH);  
+  //count OUT, pGreen, GREEN  
+ int  green = pulseIn(sensorIn, digitalRead(sensorIn) == HIGH ? LOW : HIGH);  
+
+
+    Serial.print("red freq= ");//printing name
+    Serial.println(red);//printing RED color frequency
+
+
+    Serial.print("green freq= ");//printing name
+    Serial.println(green);//printing RED color frequency
+
+
+    Serial.print("blue freq= ");//printing name
+    Serial.println(blue);//printing RED color frequency
+    
+    delay(2000);
+}
+
+
+
   void checkWall(){
     // if green call turnRight
     // else if red call turnLeft
     // else if right open call turnRight
+
+    // code to read from color sensor
+
+
+
+
+    
+    
+
+    
     if(right > 30){
       turnRight();
     }
