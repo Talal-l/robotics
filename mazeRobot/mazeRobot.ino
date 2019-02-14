@@ -89,8 +89,8 @@ void setup()
   pinMode(sensorIn, INPUT);
   
   // set frequency-scalling to 20% to insure that the pulse is detected 
-  digitalWrite(s0,HIGH);
-  digitalWrite(s1,LOW);
+  digitalWrite(s0,LOW);
+  digitalWrite(s1,HIGH);
 
 
 }
@@ -98,38 +98,35 @@ void setup()
 
   void loop()
   {
-
-    color();
+    
+    read();
+    
+    
+    if (front < 30) {
+      // check wall
+//      stop();
+//      delay(1000);
+      while(front > 5){
+        moveForward(1);
+        read();
+      }
+      checkWall();
+    } 
+    else if (right > 35){
+      // turn right 
+//      stop();
+//      delay(1000);
+      moveForward(25);
+      turnRight();
+    }
 
     
-//    read();
-//    
-//    
-//    if (front < 30) {
-//      // check wall
-////      stop();
-////      delay(1000);
-//      while(front > 5){
-//        moveForward(1);
-//        read();
-//      }
-//      checkWall();
-//    } 
-//    else if (right > 35){
-//      // turn right 
-////      stop();
-////      delay(1000);
-//      moveForward(25);
-//      turnRight();
-//    }
-//
-//    
-//    else {
-//      //course correct
-//      courseCorrect();
-//      // move forward
-//      moveForward(1);
-//    }
+    else {
+      //course correct
+      courseCorrect();
+      // move forward
+      moveForward(1);
+    }
   }
 
 void courseCorrect(){
@@ -162,7 +159,7 @@ void moveForward(int d){
     turnWithAngle(-90);
     // move some small distance to enter between the walls
     moveForward(10);
-
+    Serial.println("Turn Right");
   }
 
   void turnLeft(){
@@ -170,10 +167,11 @@ void moveForward(int d){
     // just turn left
     turnWithAngle(90);
     moveForward(10);
+    Serial.println("Turn Left");
   }
 
 
-void color()  
+void color(bool *b, bool *r)  
 {    
 // only read color if sensorIn is high
   digitalWrite(s2, LOW);  
@@ -197,27 +195,29 @@ int  red = pulseIn(sensorIn, digitalRead(sensorIn) == HIGH ? LOW : HIGH);
 
     Serial.print("blue freq= ");//printing name
     Serial.println(blue);//printing RED color frequency
+
+    *r = red < 500;
+    *b = blue < 500;
     
-    delay(2000);
+    //delay(2000);
 }
 
 
 
   void checkWall(){
-    // if green call turnRight
+
+    bool b = false, r = false;
+    color(&b,&r);
+    // if blue call turnRight
+    if(b && !r){
+      turnRight();
+    }
     // else if red call turnLeft
+    else if(r && !b){
+      turnLeft();
+    }
     // else if right open call turnRight
-
-    // code to read from color sensor
-
-
-
-
-    
-    
-
-    
-    if(right > 30){
+    else if(right > 30){
       turnRight();
     }
     // else if no right and left open call turnLeft
@@ -228,10 +228,13 @@ int  red = pulseIn(sensorIn, digitalRead(sensorIn) == HIGH ? LOW : HIGH);
     else{
       turn180();
     }
+
+    delay(2000);
   }
 
   void turn180(){
     turnWithAngle(180);
+    Serial.println("turn 180");
   }
   
   bool read()
