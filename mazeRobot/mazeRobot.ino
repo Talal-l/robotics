@@ -40,26 +40,7 @@ void ForWSpeed(int s)
 //Stay
 
 /////////////////////////////////////////////
-//turn with degree
-void turnWithAngle(int theta)
-{
-  int c = 9; //or 11 with the AAA batrays
-  int t = 36.6 * 2 * theta / 180 * 3.1415 * c;
-  int s = 200;
-  if (t >= 0)
-  {
-    r.writeMicroseconds(1300);
-    l.writeMicroseconds(1400);
-    delay(t);
-  }
-  else
-  {
-    r.writeMicroseconds(1700);
-    l.writeMicroseconds(1600);
-    delay(-1 * t);
-  }
-  stop();
-}
+
 
 /////////////////////////////////////////////////////////////////////////////
 // configuration of input types of declared variables;
@@ -144,14 +125,38 @@ void stop()
   r.writeMicroseconds(1500);
   l.writeMicroseconds(1500);
 }
+//move forward with destance d
 void moveForward(int d){
     // move by des
     int t = d * 36.6 * 1.5;
     int s = 200;
-    r.writeMicroseconds(1300);
-    l.writeMicroseconds(1620);
+    r.writeMicroseconds(1300); // move right servo with speed 200(max)
+    l.writeMicroseconds(1620); // move left servo with speed 120 to match the pace of the left servo
     delay(t);
 
+}
+/**
+  *@desc turn with degree
+  *@param int theta - the angle from the center line of the robot to the angle desired in the counterclockwise direction
+*/
+void turnWithAngle(int theta)
+{
+  int c = 9; //or 11 with the AAA batrays
+  int t = 36.6 * 2 * theta / 180 * 3.1415 * c;
+  int s = 200;
+  if (t >= 0)
+  {
+    r.writeMicroseconds(1300); //the values of the servo are diffrent because of the same problem above
+    l.writeMicroseconds(1400);
+    delay(t);
+  }
+  else
+  {
+    r.writeMicroseconds(1700);
+    l.writeMicroseconds(1600);
+    delay(-1 * t);
+  }
+  stop();
 }
   void turnRight(){
 
