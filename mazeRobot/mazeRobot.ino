@@ -25,6 +25,7 @@ int s2 = 6;
 int s3 = 7;
 // pin used to read the output of the sensor
 int sensorIn = A3 ;
+int led = A2;
 
 
 
@@ -73,27 +74,40 @@ void setup()
   digitalWrite(s0,LOW);
   digitalWrite(s1,HIGH);
 
+//  //pin for the color sensor LED
+    pinMode(led, OUTPUT);
+//  Serial.println("setup");
+  analogWrite(led, HIGH);
+  
+  
+
 
 }
   // code in infinite repetition of the project;
 
   void loop()
   {
-    
+    delay(1000);
+//    analogWrite(led, HIGH);
+//    Serial.println("turned off");
+//    delay(1000);
+    analogWrite(led, LOW);
+//    Serial.println("turned on");
     read();
     
-    
     if (front < 30) {
+      Serial.println("Check point 1");
       // check wall
 //      stop();
 //      delay(1000);
-      while(front > 5){
+      while(front > 2){
         moveForward(1);
         read();
       }
       checkWall();
     } 
     else if (right > 35){
+      Serial.println("Check point 2");
       // turn right 
 //      stop();
 //      delay(1000);
@@ -103,6 +117,7 @@ void setup()
 
     
     else {
+      Serial.println("Check point 3");
       //course correct
       courseCorrect();
       // move forward
@@ -178,6 +193,7 @@ void turnWithAngle(int theta)
 
 void color(bool *b, bool *r)  
 {    
+  analogWrite(A2, LOW);
 // only read color if sensorIn is high
   digitalWrite(s2, LOW);  
   digitalWrite(s3, LOW);   
@@ -190,36 +206,40 @@ int  red = pulseIn(sensorIn, digitalRead(sensorIn) == HIGH ? LOW : HIGH);
  int  green = pulseIn(sensorIn, digitalRead(sensorIn) == HIGH ? LOW : HIGH);  
 
 
-    Serial.print("red freq= ");//printing name
-    Serial.println(red);//printing RED color frequency
-
-
-    Serial.print("green freq= ");//printing name
-    Serial.println(green);//printing RED color frequency
-
-
-    Serial.print("blue freq= ");//printing name
-    Serial.println(blue);//printing RED color frequency
+//    Serial.print("red freq= ");//printing name
+//    Serial.println(red);//printing RED color frequency
+//
+//
+//    Serial.print("green freq= ");//printing name
+//    Serial.println(green);//printing RED color frequency
+//
+//
+//    Serial.print("blue freq= ");//printing name
+//    Serial.println(blue);//printing RED color frequency
 
     *r = red < 500;
     *b = blue < 500;
-    
+    analogWrite(A2, HIGH);
     //delay(2000);
 }
 
 
 
   void checkWall(){
-
-    bool b = false, r = false;
-    color(&b,&r);
-    // if blue call turnRight
-    if(b && !r){
-      turnRight();
-    }
-    // else if red call turnLeft
-    else if(r && !b){
-      turnLeft();
+     Serial.println("entering checkWall()");
+    bool blue = false, red = false;
+    stop();
+    delay(1000);
+    color(&blue,&red);
+    if(left > 30 && right > 30){
+      // if blue call turnRight
+      if(!blue && red){
+        turnLeft();
+      }
+      // else if red call turnLeft
+      else{
+        turnRight();
+      }
     }
     // else if right open call turnRight
     else if(right > 30){
@@ -234,7 +254,7 @@ int  red = pulseIn(sensorIn, digitalRead(sensorIn) == HIGH ? LOW : HIGH);
       turn180();
     }
 
-    delay(2000);
+    //delay(2000);
   }
 
   void turn180(){
@@ -280,12 +300,12 @@ int  red = pulseIn(sensorIn, digitalRead(sensorIn) == HIGH ? LOW : HIGH);
     b_frente = pulseIn(echo_b, HIGH); // so also on the other two sensors.
     back = b_frente / 29 / 2;
     //Print
-//    Serial.print("right : ");
-//    Serial.println(right);
-//    Serial.print("left:   ");
-//    Serial.println(left);
-//    Serial.print("front:   ");
-//    Serial.println(front);
+    Serial.print("right : ");
+    Serial.println(right);
+    Serial.print("left:   ");
+    Serial.println(left);
+    Serial.print("front:   ");
+    Serial.println(front);
 //    Serial.print("back:   ");
 //    Serial.println(back);
     //delay(1000);
